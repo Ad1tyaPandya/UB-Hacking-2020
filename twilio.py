@@ -5,5 +5,3 @@ auth_token = 'ab08351b6999fc8f3123da18e1b60332'
 client = Client(account_sid, auth_token)
 
 message = client.messages.create(body="Your house is on fire.", from_='+12513151614', to='+17166501231')
-
-print(message.sid)
