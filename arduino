@@ -1,0 +1,23 @@
+bool active = false;
+
+void setup() {
+  Serial.begin(9600);
+  while (!Serial) {}
+}
+
+void loop() {
+  int availableBytes = Serial.availableForWrite();
+  if (availableBytes >= 1)
+  {
+    if (active)
+    {
+      Serial.write("a");
+    }
+    else
+    {
+      Serial.write("b");
+    }
+    active = !active;
+  }
+  delay(1000);
+}
