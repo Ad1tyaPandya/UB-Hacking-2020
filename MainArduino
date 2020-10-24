@@ -1,0 +1,37 @@
+bool active = false;
+int motorPin = 4;
+int sensorPin = A0;
+int motorSpinTime = 1000;
+
+void setup() {
+  pinMode(motorPin, OUTPUT);
+  pinMode(sensorPin, INPUT);
+  Serial.begin(9600);
+  while (!Serial) {}
+}
+
+void loop() {
+  // code here to determine if active or not
+  Serial.println(analogRead(sensorPin));
+  
+  if (!active)
+  {
+    int availableBytes = Serial.availableForWrite();
+    if (availableBytes >= 1)
+    {
+      Serial.write("a");
+    }
+  }
+  else
+  {
+    int availableBytes = Serial.availableForWrite();
+    if (availableBytes >= 1)
+    {
+      Serial.write("b");
+    }
+    digitalWrite(motorPin, HIGH);
+    delay(motorSpinTime);
+    digitalWrite(motorPin, LOW);
+  }
+  delay(1000);
+}
