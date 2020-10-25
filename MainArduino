@@ -1,20 +1,29 @@
+#include <Servo.h>
+
+Servo servo;
 bool active = false;
-int motorPin = 4;
+int hoseMotor = 4;
+int doorMotor = 7;
 int sensorPin = A0;
 int motorSpinTime = 1000;
 
 void setup() {
-  pinMode(motorPin, OUTPUT);
+  pinMode(hoseMotor, OUTPUT);
   pinMode(sensorPin, INPUT);
+  servo.attach(doorMotor);
   Serial.begin(9600);
   while (!Serial) {}
 }
 
 void loop() {
-  // code here to determine if active or not
-  Serial.println(analogRead(sensorPin));
-  
-  if (!active)
+  int onFire = analogRead(sensorPin);
+
+  if (onFire > 600 && !active)
+  {
+    active = true;
+    activate();
+  }
+  else
   {
     int availableBytes = Serial.availableForWrite();
     if (availableBytes >= 1)
@@ -22,16 +31,31 @@ void loop() {
       Serial.write("a");
     }
   }
+
+  if (Serial.read() != -1)
+  {
+    servo.write(30);
+    delay(motorSpinTime);
+    servo.write(0);
+  }
+ 
+  delay(1000);
+}
+
+void activate()
+{
+  int availableBytes = Serial.availableForWrite();
+  if (availableBytes >= 1)
+  {
+    Serial.write("b");
+    digitalWrite(hoseMotor, HIGH);
+    digitalWrite(doorMotor, HIGH);
+    delay(motorSpinTime);
+    digitalWrite(hoseMotor, LOW);
+    digitalWrite(doorMotor, LOW);
+  }
   else
   {
-    int availableBytes = Serial.availableForWrite();
-    if (availableBytes >= 1)
-    {
-      Serial.write("b");
-    }
-    digitalWrite(motorPin, HIGH);
-    delay(motorSpinTime);
-    digitalWrite(motorPin, LOW);
+    active = false;
   }
-  delay(1000);
 }
